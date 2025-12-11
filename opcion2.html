@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galeria Arte – Opción 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    /* NAVBAR (same as index) */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background-color: #007ac2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #ffffff;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 15px;
+    }
+
+    .nav-link {
+      position: relative;
+      text-decoration: none;
+      color: #ffffff;
+      padding-bottom: 4px;
+    }
+
+    .nav-link:hover {
+      opacity: 0.85;
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background-color: #ffffff;
+      border-radius: 2px 2px 0 0;
+    }
+
+    .nav-search {
+      border: none;
+      background: none;
+      color: #ffffff;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* 360 VIEWER */
+    .viewer-wrapper {
+      position: relative;
+      margin-top: 56px; /* altura de la barra */
+      width: 100%;
+      height: calc(100vh - 56px);
+      background-color: #000000;
+    }
+
+    .viewer-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-brand">Galeria Arte</div>
+    <nav class="navbar-menu">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="opcion1.html" class="nav-link active">Opcion 1</a>
+      <a href="opcion2.html" class="nav-link">Opcion 2</a>
+      <a href="opcion3.html" class="nav-link">Opcion 3</a>
+      <button class="nav-search" aria-label="Buscar">
+        &#128269;
+      </button>
+    </nav>
+  </header>
+
+  <main class="viewer-wrapper">
+    <iframe
+      src="https://momento360.com/e/u/61755a7882ec442db055f3e14d0c5f9e?utm_campaign=embed&utm_source=other&heading=0&pitch=0&field-of-view=75&size=medium&display-plan=true"
+      allow="fullscreen; accelerometer; gyroscope; magnetometer; xr-spatial-tracking; vr; webvr; webxr"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen>
+    </iframe>
+  </main>
+</body>
+</html>
