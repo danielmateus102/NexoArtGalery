@@ -155,29 +155,7 @@
     </iframe>
   </main>
 
-  
-  <script>
-    // Display-only counter (no increment here)
-    // CounterAPI v2 returns: { code: "200", data: { up_count: number, ... } }
-    const COUNTER_URL = 'https://api.counterapi.dev/v2/daniel-mateuss-team-2093/opcion1';
-    const likeCountEl = document.getElementById('likeCount');
 
-    function refreshLikes(){
-      fetch(COUNTER_URL)
-        .then(r => r.json())
-        .then(json => {
-          const up = json?.data?.up_count;
-          likeCountEl.textContent = (typeof up === 'number' ? up : 0).toLocaleString();
-        })
-        .catch(() => {
-          likeCountEl.textContent = '0';
-        });
-    }
-
-    refreshLikes();
-    // Keep it updated in case clicks happen elsewhere
-    setInterval(refreshLikes, 5000);
-  </script>
   <script src="script.js"></script>
 </body>
 </html>
