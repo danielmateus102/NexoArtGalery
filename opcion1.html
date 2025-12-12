@@ -76,6 +76,54 @@
       padding: 0;
     }
 
+    /* LIKE COUNTER (display only) */
+    .like-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.15);
+      color:#fff;
+      font-size:14px;
+      font-weight:500;
+      cursor:default; /* no action yet */
+      backdrop-filter:blur(6px);
+    }
+    .like-btn .icon{font-size:16px;line-height:1}
+    .like-btn .count{
+      font-variant-numeric:tabular-nums;
+      font-weight:600;
+    }
+
+    .like-btn{
+      position: fixed;
+      top: 56px;              /* sits just under the navbar */
+      right: 14px;
+      margin-top: 14px;
+      z-index: 1500;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 8px 22px rgba(0,0,0,.35);
+    }
+    .like-btn:hover{ background: rgba(0,0,0,.6); }
+    .like-btn:active{ transform: translateY(1px); }
+    .like-btn .icon{ font-size: 18px; line-height: 1; }
+    .like-btn .label{ font-size: 13px; font-weight: 600; letter-spacing: .2px; }
+
     /* 360 VIEWER */
     .viewer-wrapper {
       position: relative;
@@ -98,6 +146,10 @@
   <header class="navbar">
     <div class="navbar-brand">Galeria Arte</div>
     <nav class="navbar-menu">
+      <div class="like-btn" aria-label="Likes">
+        <span class="icon" aria-hidden="true">❤️</span>
+        <span class="count" id="likeCount">–</span>
+      </div>
       <a href="index.html" class="nav-link">Home</a>
       <a href="opcion1.html" class="nav-link">Opcion 1</a>
       <a href="opcion2.html" class="nav-link">Opcion 2</a>
@@ -109,6 +161,8 @@
     </nav>
   </header>
 
+  
+
   <main class="viewer-wrapper">
     <iframe
       src="https://momento360.com/e/u/80ff78a21c694a2382eb7a65950cc050?utm_campaign=embed&utm_source=other&heading=0&pitch=0&field-of-view=75&size=medium&display-plan=true"
@@ -118,5 +172,23 @@
       mozallowfullscreen>
     </iframe>
   </main>
+  <script>
+    // Display-only counter (no increment)
+    const COUNTER_URL = 'https://api.counterapi.dev/v2/daniel-mateuss-team-2093/opcion1';
+    const likeCountEl = document.getElementById('likeCount');
+
+    fetch(COUNTER_URL)
+      .then(r => r.json())
+      .then(data => {
+        if (typeof data.count === 'number') {
+          likeCountEl.textContent = data.count.toLocaleString();
+        } else {
+          likeCountEl.textContent = '0';
+        }
+      })
+      .catch(() => {
+        likeCountEl.textContent = '0';
+      });
+  </script>
 </body>
 </html>
