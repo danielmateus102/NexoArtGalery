@@ -161,7 +161,19 @@
   </section>
 
   <section class="options">
-    <a href="opcion1.html" onclick="fetch('https://api.counterapi.dev/v2/daniel-mateuss-team-2093/nexo/up', { method: 'POST' })">Opcion 1</a>
+    <a href="opcion1.html" onclick="countAndGo(event)" class="nav-link active">Opcion 1</a>
+      <script>
+        function countAndGo(e) {
+          e.preventDefault(); // don't navigate yet
+      
+          fetch("https://api.counterapi.dev/v2/daniel-mateuss-team-2093/nexo/up", {
+            method: "GET",
+            keepalive: true
+          }).catch(()=>{}).finally(() => {
+            window.location.href = "opcion1.html";
+          });
+        }
+      </script>
     <a href="opcion2.html" class="option-btn">Opción 2</a>
     <!-- <a href="opcion3.html" class="option-btn">Opción 3</a>-->
   </section>
