@@ -128,19 +128,17 @@
   <header class="navbar">
     <div class="navbar-brand">Galeria Arte</div>
 
-    <div class="counter-pill" aria-label="Likes">
+    <button type="button" class="counter-pill" onclick="countAndGo(event, 'registrarse')" aria-label="Registrarse">
       <span class="icon" aria-hidden="true">🎨</span>
-      <span class="label">Likes</span>
+      <span class="label">Registrarse</span>
       <span class="count" id="likeCount">–</span>
-    </div>
+    </button>
+    
     <nav class="navbar-menu">
       <a href="index.html" class="nav-link">Home</a>
-      <a href="opcion1.html" class="nav-link">Opcion 1</a>
-      <a href="opcion2.html" class="nav-link">Opcion 2</a>
-      <!--
-      <a href="opcion3.html" class="nav-link">Opcion 3</a> -->
-      <button class="nav-search" aria-label="Buscar">
-        &#128269;
+      <a href="opcion1.html" class="nav-link">1</a>
+      <a href="opcion2.html" class="nav-link">2</a>
+      <a href="opcion3.html" class="nav-link">3</a>
       </button>
     </nav>
   </header>
@@ -156,6 +154,8 @@
       mozallowfullscreen>
     </iframe>
   </main>
+
+  
   <script>
     // Display-only counter (no increment here)
     // CounterAPI v2 returns: { code: "200", data: { up_count: number, ... } }
