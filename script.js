@@ -1,7 +1,5 @@
 const COUNTER_WORKSPACE = "daniel-mateuss-team-2093";
 
-// Optional: if you want the navbar pill to show the same counter as it increments
-// Match this with the key you use in onclick (e.g., 'opcion1' or 'registrarse')
 function updateCounterUI(counterKey) {
   const el = document.getElementById("likeCount");
   if (!el) return;
@@ -19,21 +17,17 @@ function updateCounterUI(counterKey) {
 function countAndGo(e, counterKey) {
   e.preventDefault();
 
-  const counterUrl = `https://api.counterapi.dev/v2/${COUNTER_WORKSPACE}/${encodeURIComponent(counterKey)}/up`;
-
-  const target = e.currentTarget;
-  const href = target?.getAttribute?.("href"); // exists on <a>, not on <button>
+  const counterUrl =
+    `https://api.counterapi.dev/v2/${COUNTER_WORKSPACE}/${encodeURIComponent(counterKey)}/up`;
 
   fetch(counterUrl, { method: "GET", keepalive: true, cache: "no-store" })
     .catch(() => {})
     .finally(() => {
-      // If it's a link with href -> redirect
-      if (href && href !== "#") {
-        window.location.href = href;
-        return;
-      }
-
-      // If it's a button (no redirect) -> refresh the UI count
       updateCounterUI(counterKey);
     });
 }
+
+// ✅ load value when page opens
+document.addEventListener("DOMContentLoaded", () => {
+  updateCounterUI("opcion1");
+});
