@@ -1,0 +1,123 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* NAVBAR */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: #007ac2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  color: #ffffff;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 15px;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #ffffff;
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+.nav-link:hover { opacity: 0.85; }
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background-color: #ffffff;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Centered counter pill inside the navbar */
+.counter-pill {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  cursor: pointer;
+  transition: transform .08s ease, background-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+
+.counter-pill .icon { font-size: 16px; line-height: 1; }
+.counter-pill .label { opacity: .95; }
+.counter-pill .count { font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.counter-pill:hover{
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 10px 22px rgba(0,0,0,.35);
+}
+
+.counter-pill:active{
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 4px 10px rgba(0,0,0,.22);
+}
+
+.counter-pill:focus-visible{
+  outline: 2px solid rgba(255,255,255,.85);
+  outline-offset: 3px;
+}
+
+/* 360 VIEWER */
+.viewer-wrapper {
+  position: relative;
+  margin-top: 56px; /* navbar height */
+  width: 100%;
+  height: calc(100vh - 56px);
+  background-color: #000000;
+}
+
+.viewer-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 520px) {
+  .counter-pill .label { display: none; }
+  .navbar-menu { gap: 14px; }
+}
