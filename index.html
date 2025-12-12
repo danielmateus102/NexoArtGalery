@@ -149,6 +149,27 @@
       box-shadow: 0 6px 16px rgba(0, 122, 194, 0.35);
     }
 
+    .options2::before {
+      content: "Gráfico";
+      text-align: center;
+      font-weight: 600;
+      color: #007ac2;
+      letter-spacing: 0.4px;
+    }
+
+    .options2 .btn {
+      border-radius: 10px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .options2 .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 122, 194, 0.35);
+    }
+
     /* =====================
        RESPONSIVE
     ====================== */
@@ -177,10 +198,62 @@
       color: #007ac2;
     }
 
+    .chart-status{
+      text-align:center;
+      font-size:13px;
+      color:#666;
+      margin-top:-6px;
+    }
+
     .chart-wrapper {
       width: 100%;
       height: 220px;
     }
+
+    .bar-chart{
+      display:flex;
+      gap:18px;
+      height: 100%;
+      padding: 8px 8px 0;
+      align-items: stretch;
+    }
+
+    .bar-col{
+      flex: 1;
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .bar-value{
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bar-track{
+      width: 100%;
+      height: 180px;
+      background: rgba(0,0,0,.05);
+      border-radius: 12px;
+      overflow: hidden;
+      display:flex;
+      align-items: flex-end;
+    }
+
+    .bar-fill{
+      width: 100%;
+      height: 0%;
+      border-radius: 12px;
+      transition: height .35s ease;
+    }
+
+    .bar-fill-1{ background: #007ac2; }
+    .bar-fill-2{ background: #00a3a3; }
+    .bar-fill-3{ background: #6f42c1; }
 
     .chart-labels {
       display: flex;
@@ -218,12 +291,28 @@
   </section>
 
   <!-- PREFERRED OPTION CHART -->
-  <section class="options chart-card">
+  <section class="options2 chart-card">
     <h2 class="chart-title">Opción preferida</h2>
-    <div id="chartStatus" style="text-align:center;font-size:13px;color:#666;">Cargando…</div>
+
+    <div id="chartStatus" class="chart-status">Cargando…</div>
+
     <div class="chart-wrapper">
-      <canvas id="opcionChart" height="220"></canvas>
+      <div class="bar-chart" id="prefChart" role="img" aria-label="Opción preferida (conteos de clicks)">
+        <div class="bar-col" data-key="opcion1" aria-label="Opción 1">
+          <div class="bar-value" id="val-opcion1">–</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-1" id="fill-opcion1"></div></div>
+        </div>
+        <div class="bar-col" data-key="nexo" aria-label="Opción 2">
+          <div class="bar-value" id="val-nexo">–</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-2" id="fill-nexo"></div></div>
+        </div>
+        <div class="bar-col" data-key="opcion3" aria-label="Opción 3">
+          <div class="bar-value" id="val-opcion3">–</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-3" id="fill-opcion3"></div></div>
+        </div>
+      </div>
     </div>
+
     <div class="chart-labels">
       <span>Opción 1</span>
       <span>Opción 2</span>
@@ -231,22 +320,12 @@
     </div>
   </section>
 
-  <!-- SCRIPTS -->
-  <!-- Chart.js (UMD build, guarantees global `Chart`) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js"></script>
-
-  <!-- Your site logic (counter button, navigation redirects, etc.) -->
-  <script src="script.js"></script>
-
-  <!-- Preferred option chart (uses the same workspace + keys) -->
   <script>
-    const CHART_KEYS = ["opcion1", "nexo", "opcion3"]; // key names in CounterAPI
-    const LABELS = ["Opción 1", "Opción 2", "Opción 3"]; // what you show to users
-
-    let preferredChart = null;
+    const CHART_WORKSPACE = "daniel-mateuss-team-2093";
+    const CHART_KEYS = ["opcion1", "nexo", "opcion3"]; // CounterAPI keys
 
     async function fetchUpCount(counterKey) {
-      const url = `https://api.counterapi.dev/v2/${COUNTER_WORKSPACE}/${encodeURIComponent(counterKey)}`;
+      const url = `https://api.counterapi.dev/v2/${CHART_WORKSPACE}/${encodeURIComponent(counterKey)}`;
       try {
         const res = await fetch(url, { cache: "no-store" });
         const json = await res.json();
@@ -257,65 +336,40 @@
       }
     }
 
-    async function refreshPreferredChart() {
-      const statusEl = document.getElementById("chartStatus");
-      const canvas = document.getElementById("opcionChart");
-      if (!canvas) return;
-
-      if (typeof Chart === "undefined") {
-        if (statusEl) statusEl.textContent = "Error: Chart.js no cargó (CDN bloqueado).";
-        return;
-      }
-
-      // Fetch counts
-      const values = await Promise.all(CHART_KEYS.map(fetchUpCount));
-      if (statusEl) statusEl.textContent = "";
-
-      // Create once, then update
-      if (!preferredChart) {
-        preferredChart = new Chart(canvas, {
-          type: "bar",
-          data: {
-            labels: LABELS,
-            datasets: [{
-              data: values,
-              borderWidth: 0,
-              borderRadius: 8
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { callbacks: { label: (ctx) => `${ctx.raw}` } }
-            },
-            scales: {
-              x: { grid: { display: false } },
-              y: {
-                beginAtZero: true,
-                ticks: { precision: 0 },
-                grid: { color: "rgba(0,0,0,.06)" }
-              }
-            }
-          }
-        });
-      } else {
-        preferredChart.data.datasets[0].data = values;
-        preferredChart.update();
+    function setBar(key, value, max) {
+      const valEl = document.getElementById(`val-${key}`);
+      const fillEl = document.getElementById(`fill-${key}`);
+      if (valEl) valEl.textContent = value.toLocaleString();
+      if (fillEl) {
+        const pct = max > 0 ? (value / max) * 100 : 0;
+        fillEl.style.height = `${Math.max(0, Math.min(100, pct))}%`;
       }
     }
 
-    function initPreferredChart() {
-      refreshPreferredChart();
-      // Optional: keep it fresh (CounterAPI can be buffered/stale briefly)
-      setInterval(refreshPreferredChart, 10000);
+    async function refreshPreferredBars() {
+      const statusEl = document.getElementById("chartStatus");
+      if (statusEl) statusEl.textContent = "Cargando…";
+
+      const values = await Promise.all(CHART_KEYS.map(fetchUpCount));
+      const max = Math.max(...values, 0);
+
+      // Map bars (opcion1, nexo, opcion3)
+      setBar("opcion1", values[0], max);
+      setBar("nexo", values[1], max);
+      setBar("opcion3", values[2], max);
+
+      if (statusEl) statusEl.textContent = "";
+    }
+
+    function initPreferredBars(){
+      refreshPreferredBars();
+      setInterval(refreshPreferredBars, 10000);
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initPreferredChart);
+      document.addEventListener("DOMContentLoaded", initPreferredBars);
     } else {
-      initPreferredChart();
+      initPreferredBars();
     }
   </script>
 </body>
