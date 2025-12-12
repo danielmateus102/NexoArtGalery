@@ -179,6 +179,7 @@
 
     .chart-wrapper {
       width: 100%;
+      height: 220px;
     }
 
     .chart-labels {
@@ -219,6 +220,7 @@
   <!-- PREFERRED OPTION CHART -->
   <section class="options chart-card">
     <h2 class="chart-title">Opción preferida</h2>
+    <div id="chartStatus" style="text-align:center;font-size:13px;color:#666;">Cargando…</div>
     <div class="chart-wrapper">
       <canvas id="opcionChart" height="220"></canvas>
     </div>
@@ -230,63 +232,91 @@
   </section>
 
   <!-- SCRIPTS -->
-  <!-- Chart.js (load once) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js (UMD build, guarantees global `Chart`) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js"></script>
 
-  <!-- Counter logic (shared) -->
+  <!-- Your site logic (counter button, navigation redirects, etc.) -->
+  <script src="script.js"></script>
+
+  <!-- Preferred option chart (uses the same workspace + keys) -->
   <script>
-    const COUNTER_WORKSPACE = "daniel-mateuss-team-2093";
+    const CHART_KEYS = ["opcion1", "nexo", "opcion3"]; // key names in CounterAPI
+    const LABELS = ["Opción 1", "Opción 2", "Opción 3"]; // what you show to users
 
-    // Generic fetcher used by button counters AND charts
-    function getCounterValue(counterKey) {
+    let preferredChart = null;
+
+    async function fetchUpCount(counterKey) {
       const url = `https://api.counterapi.dev/v2/${COUNTER_WORKSPACE}/${encodeURIComponent(counterKey)}`;
-      return fetch(url, { cache: "no-store" })
-        .then(r => r.json())
-        .then(json => json?.data?.up_count ?? 0)
-        .catch(() => 0);
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        const json = await res.json();
+        const up = json?.data?.up_count;
+        return (typeof up === "number") ? up : 0;
+      } catch {
+        return 0;
+      }
     }
-  </script>
 
-  <!-- Chart rendering -->
-  <script>
-    const CHART_KEYS = ["opcion1", "nexo", "opcion3"];
-    const LABELS = ["Opción 1", "Opción 2", "Opción 3"];
-
-    async function renderChart() {
-      const values = await Promise.all(
-        CHART_KEYS.map(key => getCounterValue(key))
-      );
-
+    async function refreshPreferredChart() {
+      const statusEl = document.getElementById("chartStatus");
       const canvas = document.getElementById("opcionChart");
       if (!canvas) return;
 
-      const ctx = canvas.getContext("2d");
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: LABELS,
-          datasets: [{
-            data: values,
-            backgroundColor: ["#007ac2", "#00a3a3", "#6f42c1"],
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false }
+      if (typeof Chart === "undefined") {
+        if (statusEl) statusEl.textContent = "Error: Chart.js no cargó (CDN bloqueado).";
+        return;
+      }
+
+      // Fetch counts
+      const values = await Promise.all(CHART_KEYS.map(fetchUpCount));
+      if (statusEl) statusEl.textContent = "";
+
+      // Create once, then update
+      if (!preferredChart) {
+        preferredChart = new Chart(canvas, {
+          type: "bar",
+          data: {
+            labels: LABELS,
+            datasets: [{
+              data: values,
+              borderWidth: 0,
+              borderRadius: 8
+            }]
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { precision: 0 }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (ctx) => `${ctx.raw}` } }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                beginAtZero: true,
+                ticks: { precision: 0 },
+                grid: { color: "rgba(0,0,0,.06)" }
+              }
             }
           }
-        }
-      );
+        });
+      } else {
+        preferredChart.data.datasets[0].data = values;
+        preferredChart.update();
+      }
     }
 
-    document.addEventListener("DOMContentLoaded", renderChart);
+    function initPreferredChart() {
+      refreshPreferredChart();
+      // Optional: keep it fresh (CounterAPI can be buffered/stale briefly)
+      setInterval(refreshPreferredChart, 10000);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initPreferredChart);
+    } else {
+      initPreferredChart();
+    }
   </script>
 </body>
 </html>
