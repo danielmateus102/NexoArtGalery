@@ -165,6 +165,29 @@
         margin: -30px 16px 0;
       }
     }
+      .chart-card {
+      margin-top: 32px;
+      gap: 24px;
+    }
+
+    .chart-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #007ac2;
+    }
+
+    .chart-wrapper {
+      width: 100%;
+    }
+
+    .chart-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #666;
+      padding: 0 8px;
+    }
   </style>
 </head>
 <body>
@@ -193,7 +216,77 @@
     <a class="btn btn-primary px-4" href="opcion3.html">Opción 3</a>
   </section>
 
+  <!-- PREFERRED OPTION CHART -->
+  <section class="options chart-card">
+    <h2 class="chart-title">Opción preferida</h2>
+    <div class="chart-wrapper">
+      <canvas id="opcionChart" height="220"></canvas>
+    </div>
+    <div class="chart-labels">
+      <span>Opción 1</span>
+      <span>Opción 2</span>
+      <span>Opción 3</span>
+    </div>
+  </section>
+
   <!-- SCRIPTS -->
-  <script src="script.js"></script>
+  <!-- Chart.js (load once) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Counter logic (shared) -->
+  <script>
+    const COUNTER_WORKSPACE = "daniel-mateuss-team-2093";
+
+    // Generic fetcher used by button counters AND charts
+    function getCounterValue(counterKey) {
+      const url = `https://api.counterapi.dev/v2/${COUNTER_WORKSPACE}/${encodeURIComponent(counterKey)}`;
+      return fetch(url, { cache: "no-store" })
+        .then(r => r.json())
+        .then(json => json?.data?.up_count ?? 0)
+        .catch(() => 0);
+    }
+  </script>
+
+  <!-- Chart rendering -->
+  <script>
+    const CHART_KEYS = ["opcion1", "nexo", "opcion3"];
+    const LABELS = ["Opción 1", "Opción 2", "Opción 3"];
+
+    async function renderChart() {
+      const values = await Promise.all(
+        CHART_KEYS.map(key => getCounterValue(key))
+      );
+
+      const canvas = document.getElementById("opcionChart");
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: LABELS,
+          datasets: [{
+            data: values,
+            backgroundColor: ["#007ac2", "#00a3a3", "#6f42c1"],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      );
+    }
+
+    document.addEventListener("DOMContentLoaded", renderChart);
+  </script>
 </body>
 </html>
