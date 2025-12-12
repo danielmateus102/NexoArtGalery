@@ -27,7 +27,10 @@ function countAndGo(e, counterKey) {
     });
 }
 
-// ✅ load value when page opens
 document.addEventListener("DOMContentLoaded", () => {
-  updateCounterUI("opcion1");
+  const pill = document.querySelector(".counter-pill[data-counter]");
+  if (!pill) return;
+
+  updateCounterUI(pill.dataset.counter);
 });
+
